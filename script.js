@@ -14,12 +14,23 @@ const API_CONFIG = {
 };
 
 function loadSpeakers() {
+    // 检查本地存储是否有缓存数据
+    const cachedData = localStorage.getItem('speakersData');
+    if (cachedData) {
+        try {
+            apiConfig = JSON.parse(cachedData);
+            updateSpeakerOptions('workers-api');
+        } catch (e) {
+            console.error('缓存数据解析失败');
+        }
+    }
     return $.ajax({
         url: 'speakers.json',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
             apiConfig = data;
+            localStorage.setItem('speakersData', JSON.stringify(data)); // 成功加载时保存到本地存储
             updateSpeakerOptions('workers-api');
         },
         error: function(jqXHR, textStatus, errorThrown) {
